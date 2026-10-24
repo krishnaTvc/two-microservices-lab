@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Users Service | Hello World</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f6f8fc; color: #172033;
+      font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 760px; margin: 8vh auto; padding: 24px; }
+    .eyebrow { color: #2563eb; font-size: 13px; font-weight: 750;
+      letter-spacing: .12em; text-transform: uppercase; }
+    h1 { font-size: clamp(32px, 6vw, 48px); line-height: 1.15; margin: 12px 0 20px; }
+    .intro { color: #526079; max-width: 560px; }
+    section { background: white; border: 1px solid #dce3ef; border-radius: 16px;
+      padding: 24px; margin-top: 28px; }
+    dl { display: grid; grid-template-columns: 110px 1fr; gap: 8px 14px; }
+    dt { color: #526079; } dd { margin: 0; overflow-wrap: anywhere; }
+    button { border: 0; border-radius: 8px; padding: 12px 18px; background: #2563eb;
+      color: white; font: inherit; font-weight: 650; cursor: pointer; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #e39920; outline-offset: 4px; }
+    button:disabled { opacity: .65; cursor: wait; }
+    #message { min-height: 28px; overflow-wrap: anywhere; }
+    footer { color: #526079; font-size: 14px; margin-top: 24px; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Independent Java microservice</div>
+    <h1>Hello from Users Service!</h1>
+    <p class="intro">A tiny application with its own source, build, release, and deployment.
+      Change this page to practice deploying just this service.</p>
+    <section aria-label="Service details">
+      <dl>
+        <dt>Application</dt><dd>users-service</dd>
+        <dt>Default port</dt><dd>8081</dd>
+        <dt>Pipeline</dt><dd>users.yml</dd>
+        <dt>Health</dt><dd><a href="/health">/health</a></dd>
+      </dl>
+      <button id="hello" type="button">Call this service</button>
+      <p id="message" role="status" aria-live="polite">Ready. Click to call /api/hello.</p>
+    </section>
+    <footer>One repository · two independent pipelines · two EC2 machines</footer>
+  </main>
+  <script>
+    const button = document.getElementById('hello');
+    const message = document.getElementById('message');
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      message.textContent = 'Calling this service…';
+      try {
+        const response = await fetch('/api/hello', { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        message.textContent = data.message + ' — response from ' + data.service;
+      } catch (error) {
+        message.textContent = 'Request failed: ' + error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
